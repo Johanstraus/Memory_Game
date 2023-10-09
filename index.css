@@ -34,8 +34,8 @@ body{
     width: calc(50% - 100px);
 }
 .cards .card .view{
-    width: 100%;
-    height: 100%; 
+    width: 95%;
+    height: 95%; 
     position: absolute;
     background: #fff;
     border-radius: 7px;
