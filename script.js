@@ -2,33 +2,62 @@ const cards = document.querySelectorAll(".card");
 
 let cardOne = null;
 let cardTwo = null;
+let disableDeck = false;
 
 function flipCard(e) {
+    if (disableDeck) return; // Ignore clicks while cards are shaking
+
     let clickedCard = e.target;
 
-    if (clickedCard !== cardOne) {
-        clickedCard.classList.add("flip");
+    if (clickedCard === cardOne || clickedCard === cardTwo || clickedCard.classList.contains("flip")) {
+        return; // Ignore clicking the same card or already flipped card
+    }
 
-        if (cardOne) {
-            cardTwo = clickedCard;
+    clickedCard.classList.add("flip");
 
-            let cardOneImg = cardOne.querySelector("img").getAttribute("src");
-            let cardTwoImg = cardTwo.querySelector("img").getAttribute("src");
+    //Setting both cards value to blank
+    if (cardOne && cardTwo) { 
+        cardOne = null;
+        cardTwo = null;
+    }
 
-            matchCards(cardOneImg, cardTwoImg);
-        } else {
-            cardOne = clickedCard;
-        }
+    if (cardOne) {
+        cardTwo = clickedCard;
+        let cardOneImg = cardOne.querySelector("img").getAttribute("src");
+        let cardTwoImg = cardTwo.querySelector("img").getAttribute("src");
+
+        matchCards(cardOne, cardTwo, cardOneImg, cardTwoImg);
+    } else {
+        cardOne = clickedCard; // Assign cardOne to the newly clicked card
     }
 }
 
-function matchCards(img1, img2) {
-    if (img1 === img2) { // If two cards' image sources match
-        console.log("Card matched");
+
+function matchCards(cardOne, cardTwo, img1, img2) {
+    if (img1 === img2) {
+        cardOne.removeEventListener("click", flipCard);
+        cardTwo.removeEventListener("click", flipCard);
+        cardOne = cardTwo = ""; //setting both cards value to blank
     } else {
-        // Handle non-matching cards
+        // If two cards do not match, add a shake class
         cardOne.classList.add("shake");
         cardTwo.classList.add("shake");
+        disableDeck = true; // Disable further clicks while cards shake
+
+        setTimeout(() => {
+            // Remove the shake class and flip class from both cards
+            cardOne.classList.remove("shake", "flip");
+            cardTwo.classList.remove("shake", "flip");
+
+            setTimeout(() => {
+                // Remove the "flip" class to reset the cards
+                cardOne.classList.remove("flip");
+                cardTwo.classList.remove("flip");
+                cardOne = null;
+                cardTwo = null;
+                disableDeck = false; // Re-enable further clicks
+            }, 100); // Adjust the delay (in milliseconds) as needed
+        }, 1000); // Adjust the delay (in milliseconds) as needed
     }
 }
 
