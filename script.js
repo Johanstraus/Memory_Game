@@ -1,5 +1,7 @@
 const cards = document.querySelectorAll(".card");
 
+
+let matchedCard = 0;
 let cardOne = null;
 let cardTwo = null;
 let disableDeck = false;
@@ -35,6 +37,12 @@ function flipCard(e) {
 
 function matchCards(cardOne, cardTwo, img1, img2) {
     if (img1 === img2) {
+        matchedCard++;
+        if(matchedCard == 8){
+            setTimeout(() =>{
+                return shuffleCard();
+            }, 1000); //calling shuffleCard function after 1 second
+        }
         cardOne.removeEventListener("click", flipCard);
         cardTwo.removeEventListener("click", flipCard);
         cardOne = cardTwo = ""; //setting both cards value to blank
@@ -60,6 +68,26 @@ function matchCards(cardOne, cardTwo, img1, img2) {
         }, 1000); // Adjust the delay (in milliseconds) as needed
     }
 }
+
+function shuffleCard() {
+    matchedCard = 0;
+    cardOne = null;
+    cardTwo = null;
+    disableDeck = false; // Reset the disableDeck flag
+    let arr = [1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8];
+    arr.sort(() => Math.random() > 0.5 ? 1 : -1); // Shuffle the array items randomly
+
+    cards.forEach((card, index) => {
+        card.classList.remove("flip");
+        card.classList.remove("shake"); // Remove the "shake" class
+        let imgTag = card.querySelector("img");
+        imgTag.setAttribute("src", `Assets/img-${arr[index]}.jpeg`); // Assign shuffled images
+        card.addEventListener("click", flipCard);
+    });
+}
+
+
+shuffleCard();
 
 cards.forEach(card => {
     card.addEventListener("click", flipCard);
